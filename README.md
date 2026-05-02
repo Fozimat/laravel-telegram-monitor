@@ -17,13 +17,13 @@ Lightweight Telegram error monitoring for Laravel applications. This package hoo
 
 ## Installation
 
-If the package has already been published to Packagist:
+If the package is available on Packagist, install the latest stable release:
 
 ```bash
-composer require fozimat/laravel-telegram-monitor
+composer require fozimat/laravel-telegram-monitor:^1.0
 ```
 
-If you want to install it directly from GitHub before publishing to Packagist, add this repository entry to your Laravel project's `composer.json`:
+If you want to install it directly from GitHub, add this repository entry to your Laravel project's `composer.json`:
 
 ```json
 {
@@ -36,10 +36,16 @@ If you want to install it directly from GitHub before publishing to Packagist, a
 }
 ```
 
-Then install the package:
+Then require the stable tagged version:
 
 ```bash
-composer require fozimat/laravel-telegram-monitor
+composer require fozimat/laravel-telegram-monitor:^1.0
+```
+
+If you need the latest development branch instead, you can install:
+
+```bash
+composer require fozimat/laravel-telegram-monitor:dev-main
 ```
 
 ## Configuration
