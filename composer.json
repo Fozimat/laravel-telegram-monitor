@@ -1,0 +1,40 @@
+{
+    "name": "fozimat/laravel-telegram-monitor",
+    "description": "Telegram error monitoring package for Laravel applications",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "telegram",
+        "monitoring",
+        "errors",
+        "alerts"
+    ],
+    "homepage": "https://github.com/fozimat/laravel-telegram-monitor",
+    "authors": [
+        {
+            "name": "Fozimat"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/fozimat/laravel-telegram-monitor/issues",
+        "source": "https://github.com/fozimat/laravel-telegram-monitor"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fozimat\\TelegramMonitor\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fozimat\\TelegramMonitor\\TelegramMonitorServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}
