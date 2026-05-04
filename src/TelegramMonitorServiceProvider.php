@@ -40,5 +40,17 @@ class TelegramMonitorServiceProvider extends ServiceProvider
                 });
             }
         });
+
+        // Listen to Laravel log events so direct Log::error()/critical() calls can also be reported.
+        if ($this->app->bound('events')) {
+            $this->app['events']->listen('Illuminate\Log\Events\MessageLogged', function ($event) {
+                $notifier = $this->app->make(TelegramErrorNotifier::class);
+                $notifier->notifyLog(
+                    (string) ($event->level ?? 'error'),
+                    $event->message ?? '',
+                    is_array($event->context ?? null) ? $event->context : []
+                );
+            });
+        }
     }
 }

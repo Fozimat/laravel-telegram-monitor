@@ -17,35 +17,10 @@ Lightweight Telegram error monitoring for Laravel applications. This package hoo
 
 ## Installation
 
-If the package is available on Packagist, install the latest stable release:
+Install the latest stable release from Packagist:
 
 ```bash
 composer require fozimat/laravel-telegram-monitor:^1.0
-```
-
-If you want to install it directly from GitHub, add this repository entry to your Laravel project's `composer.json`:
-
-```json
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/fozimat/laravel-telegram-monitor.git"
-    }
-  ]
-}
-```
-
-Then require the stable tagged version:
-
-```bash
-composer require fozimat/laravel-telegram-monitor:^1.0
-```
-
-If you need the latest development branch instead, you can install:
-
-```bash
-composer require fozimat/laravel-telegram-monitor:dev-main
 ```
 
 ## Configuration
@@ -62,6 +37,7 @@ Add these variables to your application's `.env` file:
 
 ```env
 ERROR_MONITORING_ENABLED=true
+ERROR_MONITORING_CAPTURE_LOGS=true
 ERROR_MONITORING_LEVEL=error
 TELEGRAM_BOT_TOKEN=1234567890:ABCDefGhIjKlMnOpQrStUvWxYz
 TELEGRAM_CHAT_ID=-100123456789
@@ -69,11 +45,36 @@ APP_NAME="My Laravel App"
 APP_ENV=production
 ```
 
-`ERROR_MONITORING_LEVEL` works as the minimum threshold for reported exceptions. Exceptions handled by this package are treated as `error` severity events.
+`ERROR_MONITORING_LEVEL` works as the minimum threshold for both reported exceptions and Laravel log events.
+Exceptions handled by this package are treated as `error` severity events, while direct `Log::debug()`, `Log::info()`, `Log::warning()`, `Log::error()`, `Log::critical()`, and similar calls use their actual log level.
+
+`ERROR_MONITORING_CAPTURE_LOGS` controls whether Laravel log events should be forwarded to Telegram. Leave it enabled if you want direct `Log::*` calls to be reported too.
+
+Log levels are applied in this order:
+
+```text
+debug < info < notice < warning < error < critical < alert < emergency
+```
+
+The configured level acts as the minimum threshold, so that level and anything above it will be reported.
+
+Examples:
+
+- `ERROR_MONITORING_LEVEL=debug` reports: `debug`, `info`, `notice`, `warning`, `error`, `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=info` reports: `info`, `notice`, `warning`, `error`, `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=notice` reports: `notice`, `warning`, `error`, `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=warning` reports: `warning`, `error`, `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=error` reports: `error`, `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=critical` reports: `critical`, `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=alert` reports: `alert`, `emergency`
+- `ERROR_MONITORING_LEVEL=emergency` reports: `emergency`
 
 ## Usage
 
-After installation and environment setup, the package will automatically send reportable exceptions to Telegram.
+After installation and environment setup, the package will automatically send:
+
+- Reportable exceptions from Laravel's exception handler
+- Laravel log events such as `Log::error(...)`, `Log::critical(...)`, and `Log::alert(...)` when they pass the configured threshold
 
 Example notification:
 
@@ -101,3 +102,18 @@ Route::get('/test-telegram-error', function () {
 ```
 
 Visit `/test-telegram-error` and confirm the message arrives in Telegram.
+
+You can also test direct log reporting:
+
+```php
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/test-telegram-log', function () {
+    Log::error('SSO callback failed.', [
+        'message' => 'Invalid OAuth state.',
+    ]);
+
+    return 'Log sent.';
+});
+```

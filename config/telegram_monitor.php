@@ -33,6 +33,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Capture Laravel Log Events
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, direct Log::error(), Log::critical(), and similar log
+    | calls will also be reported to Telegram when they pass the threshold.
+    |
+    */
+    'capture_logs' => env('ERROR_MONITORING_CAPTURE_LOGS', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Minimum Error Level
     |--------------------------------------------------------------------------
     |
